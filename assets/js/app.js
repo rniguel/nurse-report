@@ -16,7 +16,7 @@
   ];
 
   var CONFIG_IDS = [
-    'modoEstrito', 'perguntasIA', 'secaoAtividades', 'secaoReflexao', 'secaoPesquisa',
+    'modoEstrito', 'perguntasIA', 'modoCritico', 'secaoAtividades', 'secaoReflexao', 'secaoPesquisa',
     'secaoDcn', 'secaoCampo', 'secaoProfessor', 'secaoAutoavaliacao'
   ];
 
@@ -76,6 +76,7 @@
       config: {
         modoEstrito: false,
         perguntasIA: false,
+        modoCritico: false,
         secaoAtividades: true,
         secaoReflexao: true,
         secaoPesquisa: true,
@@ -560,6 +561,7 @@
 
     var modoEstrito = document.getElementById('modoEstrito').checked;
     var perguntasIA = document.getElementById('perguntasIA').checked;
+    var modoCritico = document.getElementById('modoCritico').checked;
     var secaoAtividades = document.getElementById('secaoAtividades').checked;
     var secaoReflexao = document.getElementById('secaoReflexao').checked;
     var secaoPesquisa = document.getElementById('secaoPesquisa').checked;
@@ -834,6 +836,30 @@
           'Gere exclusivamente o relat\u00f3rio estruturado final com as refer\u00eancias, sem qualquer ' +
           'introdu\u00e7\u00e3o ou coment\u00e1rio informal antes ou depois da resposta.\n';
 
+    promptText += modoCritico
+      ? '\n' +
+        '=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=\n' +
+        'INSTRU\u00c7\u00c3O DE AN\u00c1LISE CR\u00cdTICA:\n' +
+        '=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=\n' +
+        '\n' +
+        'Ap\u00f3s gerar o relat\u00f3rio completo acima, inclua uma se\u00e7\u00e3o intitulada ' +
+        '"AN\u00c1LISE CR\u00cdTICA E RECOMENDA\u00c7\u00d5ES" ao final, contendo:\n' +
+        '\n' +
+        '1. Pontos fortes do relat\u00f3rio \u2014 o que est\u00e1 bem fundamentado, ' +
+        'coerente e alinhado \u00e0s DCNs\n' +
+        '2. Pontos a melhorar \u2014 lacunas, informa\u00e7\u00f5es vagas, termos que ' +
+        'poderiam ser mais precisos\n' +
+        '3. Sugest\u00f5es de aprofundamento \u2014 temas que o aluno poderia ' +
+        'pesquisar para enriquecer o aprendizado\n' +
+        '4. Alinhamento DCN \u2014 verifique se a DCN informada foi adequadamente ' +
+        'desenvolvida no relat\u00f3rio\n' +
+        '5. Perguntas para reflex\u00e3o \u2014 2 a 3 perguntas que estimulem o ' +
+        'aluno a pensar criticamente sobre a pr\u00e1tica\n' +
+        '\n' +
+        'Seja honesto, construtivo e espec\u00edfico. Aponte exatamente o que pode ' +
+        'ser melhorado com base nos dados fornecidos pelo aluno.\n'
+      : '';
+
     var resultArea = document.getElementById('promptResult');
     resultArea.value = promptText;
     document.getElementById('outputArea').style.display = 'block';
@@ -856,6 +882,17 @@
       .catch(function () {
         alert('Prompt copiado com sucesso! Pronto para colar na sua IA.');
       });
+  };
+
+  window.abrirIA = function (url, nome) {
+    var promptText = document.getElementById('promptResult').value;
+    navigator.clipboard.writeText(promptText).then(function () {
+      mostrarToast('Prompt copiado! Abrindo ' + nome + '...');
+      window.open(url, '_blank');
+    }).catch(function () {
+      alert('Prompt copiado! Abrindo ' + nome + ' em nova aba.');
+      window.open(url, '_blank');
+    });
   };
 
   window.limparFormulario = function () {

@@ -184,6 +184,15 @@
           </div>
 
           <div class="config-group">
+            <label class="checkbox-label">
+              <input type="checkbox" id="modoCritico" />
+              <span class="checkbox-custom"></span>
+              <strong>Modo Cr&iacute;tico</strong>
+              <span class="checkbox-hint">Ap&oacute;s gerar o relat&oacute;rio, a IA deve incluir uma se&ccedil;&atilde;o de an&aacute;lise cr&iacute;tica apontando pontos fortes, lacunas e sugest&otilde;es de melhoria com base nos dados fornecidos</span>
+            </label>
+          </div>
+
+          <div class="config-group">
             <span class="config-label">Se&ccedil;&otilde;es obrigat&oacute;rias no relat&oacute;rio:</span>
             <div class="checkbox-grid">
               <label class="checkbox-label">
@@ -249,6 +258,18 @@
           <button type="button" class="btn btn-success" onclick="gerarPrompt()">
             Regenerar
           </button>
+        </div>
+
+        <div class="ai-shortcuts">
+          <span class="ai-shortcuts-label">Enviar para:</span>
+          <div class="ai-buttons">
+            <button type="button" class="btn-ai btn-ai-chatgpt" onclick="abrirIA('https://chat.openai.com', 'ChatGPT')">ChatGPT</button>
+            <button type="button" class="btn-ai btn-ai-gemini" onclick="abrirIA('https://gemini.google.com', 'Gemini')">Gemini</button>
+            <button type="button" class="btn-ai btn-ai-claude" onclick="abrirIA('https://claude.ai', 'Claude')">Claude</button>
+            <button type="button" class="btn-ai btn-ai-deepseek" onclick="abrirIA('https://chat.deepseek.com', 'DeepSeek')">DeepSeek</button>
+            <button type="button" class="btn-ai btn-ai-perplexity" onclick="abrirIA('https://www.perplexity.ai', 'Perplexity')">Perplexity</button>
+            <button type="button" class="btn-ai btn-ai-grok" onclick="abrirIA('https://grok.com', 'Grok')">Grok</button>
+          </div>
         </div>
       </div>
     </div>
