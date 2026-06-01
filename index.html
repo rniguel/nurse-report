@@ -3,637 +3,164 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Gerador de Prompt - Webfólio São Camilo</title>
-    <style>
-      :root {
-        --primary: #00796b;
-        --primary-light: #e0f2f1;
-        --primary-dark: #004d40;
-        --accent: #85a01e;
-        --accent-hover: #6d8417;
-        --bg: #f0f4f4;
-        --card-bg: #ffffff;
-        --text-main: #2c3e50;
-        --text-muted: #7f8c8d;
-        --border: #dcdde1;
-        --radius: 10px;
-        --shadow: 0 8px 24px rgba(0, 121, 107, 0.06);
-      }
-
-      * {
-        box-sizing: border-box;
-        margin: 0;
-        padding: 0;
-      }
-
-      body {
-        font-family:
-          "Segoe UI",
-          system-ui,
-          -apple-system,
-          sans-serif;
-        background-color: var(--bg);
-        color: var(--text-main);
-        padding: 30px 15px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        min-height: 100vh;
-      }
-
-      .container {
-        width: 100%;
-        max-width: 900px;
-        background: var(--card-bg);
-        padding: 40px;
-        border-radius: var(--radius);
-        box-shadow: var(--shadow);
-        border-top: 6px solid var(--primary);
-      }
-
-      header {
-        text-align: center;
-        margin-bottom: 35px;
-      }
-
-      h1 {
-        color: var(--primary-dark);
-        font-size: 2rem;
-        font-weight: 700;
-        margin-bottom: 8px;
-      }
-
-      header p {
-        color: var(--text-muted);
-        font-size: 1rem;
-      }
-
-      fieldset {
-        border: 1px solid var(--border);
-        border-radius: var(--radius);
-        padding: 25px;
-        margin-bottom: 25px;
-        background-color: #fafbfc;
-        transition: all 0.3s ease;
-      }
-
-      fieldset:hover {
-        border-color: #b2dfdb;
-        background-color: #ffffff;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
-      }
-
-      legend {
-        font-weight: 700;
-        font-size: 0.95rem;
-        color: var(--primary);
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        padding: 0 12px;
-      }
-
-      .grid-2 {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 20px;
-      }
-
-      .form-group {
-        display: flex;
-        flex-direction: column;
-        margin-bottom: 18px;
-      }
-
-      .form-group:last-child {
-        margin-bottom: 0;
-      }
-
-      label {
-        font-size: 0.88rem;
-        font-weight: 600;
-        margin-bottom: 6px;
-        color: var(--text-main);
-      }
-
-      input[type="text"],
-      input[type="date"],
-      textarea {
-        width: 100%;
-        padding: 12px 14px;
-        border: 1px solid var(--border);
-        border-radius: 6px;
-        font-size: 0.98rem;
-        font-family: inherit;
-        color: var(--text-main);
-        background-color: #fff;
-        transition: all 0.2s ease;
-      }
-
-      input:focus,
-      textarea:focus {
-        border-color: var(--primary);
-        outline: none;
-        box-shadow: 0 0 0 3px rgba(0, 121, 107, 0.15);
-        background-color: #fff;
-      }
-
-      textarea {
-        resize: vertical;
-        min-height: 90px;
-        line-height: 1.4;
-      }
-
-      .input-mic-wrapper {
-        display: flex;
-        position: relative;
-        align-items: stretch;
-        width: 100%;
-      }
-
-      .input-mic-wrapper textarea,
-      .input-mic-wrapper input[type="text"] {
-        border-top-right-radius: 0;
-        border-bottom-right-radius: 0;
-      }
-
-      .btn-mic {
-        background-color: #f1f2f6;
-        border: 1px solid var(--border);
-        border-left: none;
-        color: var(--primary);
-        border-top-right-radius: 6px;
-        border-bottom-right-radius: 6px;
-        padding: 0 16px;
-        cursor: pointer;
-        font-size: 1.1rem;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: all 0.2s ease;
-      }
-
-      .btn-mic:hover {
-        background-color: var(--primary-light);
-        color: var(--primary);
-      }
-
-      .btn-mic.recording {
-        background-color: #ffebee;
-        border-color: #ef5350;
-        color: #d32f2f;
-        animation: pulse 1.5s infinite;
-      }
-
-      @keyframes pulse {
-        0% {
-          transform: scale(1);
-        }
-        50% {
-          transform: scale(0.97);
-          opacity: 0.8;
-        }
-        100% {
-          transform: scale(1);
-        }
-      }
-
-      .btn-primary {
-        background-color: var(--primary);
-        color: white;
-        border: none;
-        padding: 16px 24px;
-        font-size: 1.05rem;
-        font-weight: 700;
-        border-radius: 6px;
-        cursor: pointer;
-        width: 100%;
-        transition:
-          background 0.2s ease,
-          transform 0.1s ease;
-        box-shadow: 0 4px 12px rgba(0, 121, 107, 0.2);
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        margin-top: 10px;
-      }
-
-      .btn-primary:hover {
-        background-color: var(--primary-dark);
-      }
-
-      .output-section {
-        margin-top: 40px;
-        display: none;
-        border-top: 2px dashed var(--border);
-        padding-top: 30px;
-      }
-
-      .output-section h2 {
-        color: var(--primary-dark);
-        font-size: 1.25rem;
-        margin-bottom: 15px;
-        font-weight: 700;
-      }
-
-      #promptResult {
-        width: 100%;
-        min-height: 400px;
-        background-color: #fafafa;
-        border: 1px solid var(--border);
-        padding: 20px;
-        border-radius: 6px;
-        font-family: inherit;
-        font-size: 0.98rem;
-        color: #34495e;
-        margin-bottom: 20px;
-        line-height: 1.6;
-        box-sizing: border-box;
-      }
-
-      .btn-accent {
-        background-color: var(--accent);
-        color: white;
-        border: none;
-        padding: 14px 24px;
-        font-size: 1rem;
-        font-weight: 700;
-        border-radius: 6px;
-        cursor: pointer;
-        width: 100%;
-        transition: background 0.2s ease;
-        box-shadow: 0 4px 12px rgba(133, 160, 30, 0.2);
-        text-transform: uppercase;
-      }
-
-      .btn-accent:hover {
-        background-color: var(--accent-hover);
-      }
-
-      @media (max-width: 768px) {
-        .grid-2 {
-          grid-template-columns: 1fr;
-          gap: 0;
-        }
-        body {
-          padding: 10px;
-        }
-        .container {
-          padding: 20px;
-        }
-      }
-    </style>
+    <title>Gerador de Webfólio — São Camilo</title>
+    <meta name="description" content="Ferramenta para gerar prompts estruturados de relatórios de estágio em Enfermagem, alinhados às DCNs e ao manual de ensino clínico." />
+    <link rel="stylesheet" href="assets/css/style.css" />
   </head>
   <body>
     <div class="container">
       <header>
-        <h1>Gerador de Webfólio Camiliano</h1>
+        <span class="logo-icon">&#x1F4D3;</span>
+        <h1>Gerador de Webf&oacute;lio Camiliano</h1>
         <p>
-          Preencha os dados e gere o prompt customizado de acordo com a ementa
-          institucional
+          Preencha os dados do plant&atilde;o e gere um prompt
+          estruturado para o seu relat&oacute;rio di&aacute;rio de est&aacute;gio,
+          seguindo as diretrizes do manual de ensino cl&iacute;nico.
         </p>
+        <span class="speech-badge" id="speechBadge" title="Verificando suporte a ditado por voz...">🎤 &hellip;</span>
       </header>
 
       <form id="reportForm">
         <fieldset>
-          <legend>1. Dados Acadêmicos e Contexto</legend>
+          <legend>1. Dados Acad&ecirc;micos e Contexto</legend>
           <div class="grid-2">
             <div class="form-group">
-              <label for="faculdadeNome">Instituição de Ensino</label>
-              <input
-                type="text"
-                id="faculdadeNome"
-                value="Centro Universitário São Camilo"
-                required
-              />
+              <label for="faculdadeNome">Institui&ccedil;&atilde;o de Ensino</label>
+              <input type="text" id="faculdadeNome" value="Centro Universit&aacute;rio S&atilde;o Camilo" required />
             </div>
             <div class="form-group">
               <label for="professoraNome">Professor(a) Supervisor(a)</label>
-              <input
-                type="text"
-                id="professoraNome"
-                placeholder="Ex: Prof. Luciane"
-                required
-              />
+              <input type="text" id="professoraNome" placeholder="Ex: Prof. Luciane" required />
             </div>
           </div>
           <div class="grid-2">
             <div class="form-group">
-              <label for="dataPlantao">Data do Plantão</label>
+              <label for="dataPlantao">Data do Plant&atilde;o</label>
               <input type="date" id="dataPlantao" required />
             </div>
             <div class="form-group">
-              <label for="diaEstagio">Dia de Estágio (Extenso)</label>
-              <input
-                type="text"
-                id="diaEstagio"
-                placeholder="Ex: Primeiro"
-                required
-              />
+              <label for="diaEstagio">Dia de Est&aacute;gio (Extenso)</label>
+              <input type="text" id="diaEstagio" placeholder="Ex: Primeiro" required />
             </div>
           </div>
           <div class="grid-2">
             <div class="form-group">
-              <label for="estagioArea">Área / Especialidade do Estágio</label>
-              <input
-                type="text"
-                id="estagioArea"
-                placeholder="Ex: Saúde da Mulher (Obstetrícia)"
-                required
-              />
+              <label for="estagioArea">&Aacute;rea / Especialidade do Est&aacute;gio</label>
+              <input type="text" id="estagioArea" placeholder="Ex: Sa&uacute;de da Mulher (Obstetr&iacute;cia)" required />
             </div>
             <div class="form-group">
-              <label for="grupoIntegrantes">Colegas de Grupo (Opcional)</label>
-              <input
-                type="text"
-                id="grupoIntegrantes"
-                placeholder="Deixe em branco se atuou sozinho"
-              />
+              <label for="grupoIntegrantes">Colegas de Grupo <span class="text-muted">(opcional)</span></label>
+              <input type="text" id="grupoIntegrantes" placeholder="Deixe em branco se atuou sozinho" />
             </div>
           </div>
         </fieldset>
 
         <fieldset>
-          <legend>2. Campo de Estágio e Setores</legend>
+          <legend>2. Campo de Est&aacute;gio e Setores</legend>
           <div class="grid-2">
             <div class="form-group">
               <label for="hospitalNome">Nome do Hospital / Unidade</label>
-              <input
-                type="text"
-                id="hospitalNome"
-                placeholder="Ex: Hospital Municipal Vereador José Storopolli"
-                required
-              />
+              <input type="text" id="hospitalNome" placeholder="Ex: Hospital Municipal Vereador Jos&eacute; Storopolli" required />
             </div>
             <div class="form-group">
-              <label for="hospitalDescricao"
-                >Avaliação da Estrutura Física / Campo</label
-              >
-              <input
-                type="text"
-                id="hospitalDescricao"
-                placeholder="Ex: demonstrou um certo nível de precariedade em sua estrutura física; contudo..."
-                required
-              />
+              <label for="hospitalDescricao">Avalia&ccedil;&atilde;o do Campo de Est&aacute;gio</label>
+              <input type="text" id="hospitalDescricao" placeholder="Ex: Estrutura f&iacute;sica prec&aacute;ria, mas equipe resolutiva..." required />
             </div>
           </div>
           <div class="form-group">
-            <label for="setoresAcoes"
-              >Descrição de Atividades e Setores Percorridos</label
-            >
+            <label for="setoresAcoes">Descri&ccedil;&atilde;o das Atividades e Setores Percorridos</label>
             <div class="input-mic-wrapper">
-              <textarea
-                id="setoresAcoes"
-                required
-                placeholder="Relate cronologicamente o que fez no dia: setores visitados (Ex: Centro Obstétrico, Triagem, Alojamento Conjunto) e ações diretas (Ex: Manobras de Leopold, aferição de SSVV, banho no RN)..."
-              ></textarea>
-              <button
-                type="button"
-                class="btn-mic"
-                onclick="startDictation('setoresAcoes', this)"
-              >
-                🎤
-              </button>
+              <textarea id="setoresAcoes" class="tall" required placeholder="Relate cronologicamente o que fez no dia: setores visitados (ex: Centro Obst&eacute;trico, Triagem, Alojamento Conjunto) e a&ccedil;&otilde;es diretas (ex: Manobras de Leopold, aferi&ccedil;&atilde;o de SSVV, banho no RN)..."></textarea>
+              <button type="button" class="btn-mic" onclick="startDictation('setoresAcoes', this)" title="Dictar por voz">🎤</button>
             </div>
           </div>
-          <div class="form-group">
-            <label for="ocorrenciasExtra"
-              >Ocorrências Extras / Apoio Paralelo no Posto (Opcional)</label
-            >
+          <div class="form-group optional">
+            <label for="ocorrenciasExtra">Ocorr&ecirc;ncias Extras / Apoio Paralelo</label>
             <div class="input-mic-wrapper">
-              <textarea
-                id="ocorrenciasExtra"
-                placeholder="Se ajudou em outra demanda, relate aqui (Ex: Auxiliei a equipe técnica na pesagem e banho de um bebê que veio transferido da UTI)..."
-              ></textarea>
-              <button
-                type="button"
-                class="btn-mic"
-                onclick="startDictation('ocorrenciasExtra', this)"
-              >
-                🎤
-              </button>
+              <textarea id="ocorrenciasExtra" placeholder="Se ajudou em outra demanda, relate aqui (Ex: Auxiliei a equipe t&eacute;cnica na pesagem e banho de um beb&ecirc; que veio transferido da UTI)..."></textarea>
+              <button type="button" class="btn-mic" onclick="startDictation('ocorrenciasExtra', this)" title="Dictar por voz">🎤</button>
             </div>
           </div>
         </fieldset>
 
         <fieldset>
-          <legend>3. Raciocínio Clínico e Fundamentação Científica</legend>
+          <legend>3. Racioc&iacute;nio Cl&iacute;nico e Fundamenta&ccedil;&atilde;o Cient&iacute;fica</legend>
           <div class="form-group">
-            <label for="dificuldade"
-              >Lacuna de Conhecimento / Dificuldade Identificada</label
-            >
+            <label for="dificuldade">Lacuna de Conhecimento / Dificuldade Identificada</label>
             <div class="input-mic-wrapper">
-              <textarea
-                id="dificuldade"
-                required
-                placeholder="Ex: Recordação das principais fisiopatologias apresentadas pelas gestantes de alto risco..."
-              ></textarea>
-              <button
-                type="button"
-                class="btn-mic"
-                onclick="startDictation('dificuldade', this)"
-              >
-                🎤
-              </button>
+              <textarea id="dificuldade" class="tall" required placeholder="Ex: Recorda&ccedil;&atilde;o das principais fisiopatologias apresentadas pelas gestantes de alto risco..."></textarea>
+              <button type="button" class="btn-mic" onclick="startDictation('dificuldade', this)" title="Dictar por voz">🎤</button>
             </div>
           </div>
           <div class="grid-2">
             <div class="form-group">
               <label for="estudoTema">Tema Pesquisado / Objeto de Estudo</label>
-              <input
-                type="text"
-                id="estudoTema"
-                placeholder="Ex: Manual de Gestão de Alto Risco do Ministério da Saúde"
-                required
-              />
+              <input type="text" id="estudoTema" placeholder="Ex: Manual de Gest&aacute;o de Alto Risco do Minist&eacute;rio da Sa&uacute;de" required />
             </div>
             <div class="form-group">
-              <label for="estudoLink"
-                >Link Científico da Pesquisa Realizada</label
-              >
-              <input
-                type="text"
-                id="estudoLink"
-                placeholder="Ex: https://bvsms.saude.gov.br/..."
-                required
-              />
+              <label for="estudoLink">Link Cient&iacute;fico da Pesquisa Realizada</label>
+              <input type="url" id="estudoLink" placeholder="Ex: https://bvsms.saude.gov.br/..." required />
             </div>
           </div>
           <div class="form-group">
-            <label for="dcnDesenvolvida"
-              >DCN Principal Identificada e Desenvolvida no Dia</label
-            >
-            <input
-              type="text"
-              id="dcnDesenvolvida"
-              placeholder="Ex: Educação Permanente (ou Atenção à Saúde / Tomada de Decisão / Comunicação)"
-              required
-            />
+            <label for="dcnDesenvolvida">DCN Principal Identificada e Desenvolvida no Dia</label>
+            <input type="text" id="dcnDesenvolvida" placeholder="Ex: Educa&ccedil;&atilde;o Permanente / Aten&ccedil;&atilde;o &agrave; Sa&uacute;de / Tomada de Decis&atilde;o" required />
           </div>
         </fieldset>
 
-        <button type="button" class="btn-primary" onclick="gerarPrompt()">
-          Compilar e Gerar Prompt Estruturado
-        </button>
+        <fieldset>
+          <legend>4. Complementos <span class="legend-subtitle">Campos opcionais para maior precis&atilde;o do relato</span></legend>
+          <div class="form-group optional">
+            <label for="reflexaoSemanal">Reflex&atilde;o Semanal</label>
+            <div class="input-mic-wrapper">
+              <textarea id="reflexaoSemanal" class="tall" placeholder="Ex: Identifiquei como ponto central a import&acirc;ncia da vigil&acirc;ncia qualificada e da assist&ecirc;ncia humanizada no manejo da gesta&ccedil;&atilde;o de alto risco..."></textarea>
+              <button type="button" class="btn-mic" onclick="startDictation('reflexaoSemanal', this)" title="Dictar por voz">🎤</button>
+            </div>
+          </div>
+          <div class="form-group optional">
+            <label for="autoavaliacao">Autoavalia&ccedil;&atilde;o</label>
+            <div class="input-mic-wrapper">
+              <textarea id="autoavaliacao" class="tall" placeholder="Ex: Por ser o primeiro contato com a &aacute;rea, senti inseguran&ccedil;a, mas agi com cautela e proatividade..."></textarea>
+              <button type="button" class="btn-mic" onclick="startDictation('autoavaliacao', this)" title="Dictar por voz">🎤</button>
+            </div>
+          </div>
+          <div class="form-group optional">
+            <label for="avaliacaoProfessor">Avalia&ccedil;&atilde;o do Professor</label>
+            <div class="input-mic-wrapper">
+              <textarea id="avaliacaoProfessor" class="tall" placeholder="Ex: A professora demonstrou conhecimento amplo, dom&iacute;nio t&eacute;cnico e postura acolhedora..."></textarea>
+              <button type="button" class="btn-mic" onclick="startDictation('avaliacaoProfessor', this)" title="Dictar por voz">🎤</button>
+            </div>
+          </div>
+        </fieldset>
+
+        <div class="grid-2">
+          <button type="button" class="btn btn-primary" onclick="gerarPrompt()">
+            Compilar e Gerar Prompt
+          </button>
+          <button type="button" class="btn btn-outline" onclick="limparFormulario()">
+            Limpar
+          </button>
+        </div>
       </form>
 
       <div class="output-section" id="outputArea">
-        <h2>Área de Revisão do Prompt (Editável):</h2>
+        <h2>&#x2705; Prompt Gerado</h2>
+        <p class="subtitle">
+          Copie o prompt abaixo e cole no ChatGPT (ou sua IA de prefer&ecirc;ncia)
+          para gerar o relat&oacute;rio completo.
+        </p>
         <textarea id="promptResult"></textarea>
-        <button type="button" class="btn-accent" onclick="copiarTexto()">
-          Copiar Prompt Customizado
-        </button>
+        <div class="output-actions">
+          <button type="button" class="btn btn-accent" onclick="copiarTexto()">
+            Copiar Prompt
+          </button>
+          <button type="button" class="btn btn-success" onclick="gerarPrompt()">
+            Regenerar
+          </button>
+        </div>
       </div>
     </div>
 
-    <script>
-      let recognition = null;
-      let currentTargetField = null;
-
-      function initSpeechRecognition() {
-        const SpeechRecognition =
-          window.SpeechRecognition || window.webkitSpeechRecognition;
-        if (SpeechRecognition) {
-          recognition = new SpeechRecognition();
-          recognition.continuous = false;
-          recognition.interimResults = false;
-          recognition.lang = "pt-BR";
-
-          recognition.onresult = function (e) {
-            const resultText = e.results[0][0].transcript;
-            if (currentTargetField) {
-              currentTargetField.value =
-                currentTargetField.value.trim() !== ""
-                  ? currentTargetField.value + " " + resultText
-                  : resultText;
-            }
-          };
-
-          recognition.onerror = function (e) {
-            if (e.error === "not-allowed") {
-              alert(
-                "Acesso ao microfone negado pelo Brave/Navegador. Clique no ícone de 'Cadeado' ou 'Shield' na barra de endereço e mude a permissão de Microfone para 'PERMITIR'.",
-              );
-            }
-            resetMicButtons();
-          };
-
-          recognition.onend = function () {
-            resetMicButtons();
-          };
-        }
-      }
-
-      function startDictation(fieldId, button) {
-        if (!recognition) initSpeechRecognition();
-        if (!recognition) {
-          alert(
-            "Recurso de voz indisponível ou bloqueado por privacidade neste navegador.",
-          );
-          return;
-        }
-        if (button.classList.contains("recording")) {
-          recognition.stop();
-          return;
-        }
-        resetMicButtons();
-        currentTargetField = document.getElementById(fieldId);
-        button.classList.add("recording");
-        button.innerText = "🛑";
-        try {
-          recognition.start();
-        } catch (e) {
-          recognition.stop();
-        }
-      }
-
-      function resetMicButtons() {
-        document.querySelectorAll(".btn-mic").forEach((btn) => {
-          btn.classList.remove("recording");
-          btn.innerText = "🎤";
-        });
-      }
-
-      function formatarData(dataStr) {
-        if (!dataStr) return "";
-        const partes = dataStr.split("-");
-        return `${partes[2]}/${partes[1]}/${partes[0]}`;
-      }
-
-      function gerarPrompt() {
-        const faculdade = document.getElementById("faculdadeNome").value;
-        const professora = document.getElementById("professoraNome").value;
-        const dataFormato = formatarData(
-          document.getElementById("dataPlantao").value,
-        );
-        const dia = document.getElementById("diaEstagio").value;
-        const area = document.getElementById("estagioArea").value;
-        const integrantes = document.getElementById("grupoIntegrantes").value;
-        const hospital = document.getElementById("hospitalNome").value;
-        const hospitalDesc = document.getElementById("hospitalDescricao").value;
-        const setoresAcoes = document.getElementById("setoresAcoes").value;
-        const ocorrenciasExtra =
-          document.getElementById("ocorrenciasExtra").value;
-        const dificuldade = document.getElementById("dificuldade").value;
-        const estudoTema = document.getElementById("estudoTema").value;
-        const estudoLink = document.getElementById("estudoLink").value;
-        const dcn = document.getElementById("dcnDesenvolvida").value;
-
-        let extraBlock =
-          ocorrenciasExtra.trim() !== ""
-            ? `\n- Atividades paralelas/ocorrências extras atendidas na unidade: ${ocorrenciasExtra}`
-            : "";
-        let grupoBlock =
-          integrantes.trim() !== ""
-            ? `A docente discutiu o caso e realizou as orientações com o grupo composto por mim e os acadêmicos: ${integrantes}.`
-            : `A docente discutiu o caso e realizou as orientações de forma coletiva com o grupo de alunos em campo.`;
-
-        const promptText = `Atue como um tutor acadêmico especialista em escrita científica de Enfermagem para o ${faculdade}.
-
-Escreva um relatório diário de estágio (Webfólio) rigorosamente alinhado com as regras do manual de ensino clínico para a área de [${area}]. O texto final não pode conter termos genéricos e deve possuir exatamente 5 parágrafos estruturados + Referências Bibliográficas em formato ABNT.
-
-DADOS BRUTOS COLETADOS EM CAMPO:
-- Temporalidade: ${dia} dia de estágio, realizado em ${dataFormato}.
-- Local/Especialidade: ${hospital} | Setor/Área: ${area}.
-- Atividades, Setores e Condutas: ${setoresAcoes}${extraBlock}
-- Dificuldade Prática (Lacuna de Conhecimento): ${dificuldade}
-- Objeto de Estudo Teórico: ${estudoTema}
-- Link da Pesquisa Realizada: ${estudoLink}
-- Diretriz Curricular (DCN) em Destaque: ${dcn}
-- Supervisor Pedagógico: Professora ${professora}. ${grupoBlock}
-- Infraestrutura avaliada do Campo: ${hospitalDesc}
-
----
-
-REGRAS DE CONSTRUÇÃO TEXTUAL (Siga os parágrafos exatamente assim):
-
-Parágrafo 1 e 2 (Atividades e Setores em Campo): Iniciar com: "No ${dia} dia de estágio em ${area}, realizado em ${dataFormato}, realizei o reconhecimento de campo/atividades no ${hospital}...". Descreva detalhadamente todos os setores percorridos, dinâmicas observadas, exames, condições clínicas e ações de enfermagem executadas com base nas suas anotações (${setoresAcoes}). Se houver ocorrências extras inseridas (${ocorrenciasExtra}), mescle-as de forma fluida e técnica. Encerre destacando a discussão clínica e a retomada prática guiada pela Professora ${professora} à beira do leito.
-
-Parágrafo 3 (Lacuna de Conhecimento e Link de Pesquisa): Iniciar com: "A dificuldade identificada no dia esteve relacionada a...". Exponha a lacuna técnica baseada em dados reais (${dificuldade}). Conecte imediatamente com a Prática Baseada em Evidências, citando: "Diante disso, realizei a busca e leitura de [${estudoTema}], disponível em: ${estudoLink}, com a finalidade de aprimorar meu conhecimento...". Justifique a importância técnica desse estudo para a segurança assistencial.
-
-Parágrafo 4 (Reflexão Semanal e DCNs): Iniciar com: "Na reflexão semanal, identifiquei como ponto central a importância de...". Sintetize o aprendizado central do plantão. Conecte de forma detalhada e explícita o desenvolvimento da DCN [${dcn}] e como ela se materializou na sua tomada de decisão ou no aprimoramento do seu raciocínio clínico.
-
-Parágrafo 5 (Avaliações Institucionais e Autoavaliação): Descreva a avaliação do campo de estágio de forma realista baseado em: "${hospitalDesc}". Avalie a conduta da Professora ${professora}, exaltando seu domínio, disponibilidade e suporte para a construção da autonomia discente. Finalize com sua autoavaliação pessoal (citando como lidou com a insegurança, agiu com cautela, responsabilidade e proatividade frente às demandas).
-
-REFERÊNCIAS BIBLIOGRÁFICAS (Gerar exatamente as duas em formato ABNT):
-1. Gerar a referência bibliográfica correta do material estudado: [${estudoTema}], incluindo o link ativo: ${estudoLink}.
-2. Adicionar a referência padrão de diretrizes: BRASIL. Conselho Nacional de Educação. Câmara de Educação Superior. Parecer CNE/CES nº 64/2026. Revisão das Diretrizes Curriculares Nacionais para os Cursos de Graduação em Enfermagem. Brasília, DF, 2026.
-
-Gere exclusivamente o relatório estruturado final com as referências, sem qualquer introdução ou comentário informal antes ou depois da resposta.`;
-
-        const resultArea = document.getElementById("promptResult");
-        resultArea.value = promptText;
-        document.getElementById("outputArea").style.display = "block";
-        document
-          .getElementById("outputArea")
-          .scrollIntoView({ behavior: "smooth" });
-      }
-
-      function copiarTexto() {
-        const copyText = document.getElementById("promptResult");
-        copyText.select();
-        copyText.setSelectionRange(0, 99999);
-        navigator.clipboard.writeText(copyText.value);
-        alert("Prompt copiado com sucesso! Pronto para colar na sua IA.");
-      }
-    </script>
+    <script src="assets/js/app.js"></script>
   </body>
 </html>
