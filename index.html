@@ -1,0 +1,698 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Gerador de Prompt - Relatórios de Enfermagem</title>
+    <style>
+      :root {
+        --primary: #00796b;
+        --primary-light: #e0f2f1;
+        --primary-dark: #004d40;
+        --accent: #85a01e;
+        --accent-hover: #6d8417;
+        --bg: #f0f4f4;
+        --card-bg: #ffffff;
+        --text-main: #2c3e50;
+        --text-muted: #7f8c8d;
+        --border: #dcdde1;
+        --radius: 10px;
+        --shadow: 0 8px 24px rgba(0, 121, 107, 0.06);
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family:
+          "Segoe UI",
+          system-ui,
+          -apple-system,
+          sans-serif;
+        background-color: var(--bg);
+        color: var(--text-main);
+        padding: 30px 15px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+      }
+
+      .container {
+        width: 100%;
+        max-width: 900px;
+        background: var(--card-bg);
+        padding: 40px;
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        border-top: 6px solid var(--primary);
+      }
+
+      header {
+        text-align: center;
+        margin-bottom: 35px;
+      }
+
+      h1 {
+        color: var(--primary-dark);
+        font-size: 2rem;
+        font-weight: 700;
+        margin-bottom: 8px;
+      }
+
+      header p {
+        color: var(--text-muted);
+        font-size: 1rem;
+      }
+
+      fieldset {
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 25px;
+        margin-bottom: 25px;
+        background-color: #fafbfc;
+        transition: all 0.3s ease;
+      }
+
+      fieldset:hover {
+        border-color: #b2dfdb;
+        background-color: #ffffff;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
+      }
+
+      legend {
+        font-weight: 700;
+        font-size: 0.95rem;
+        color: var(--primary);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        padding: 0 12px;
+      }
+
+      .grid-2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+      }
+
+      .form-group {
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 18px;
+      }
+
+      .form-group:last-child {
+        margin-bottom: 0;
+      }
+
+      label {
+        font-size: 0.88rem;
+        font-weight: 600;
+        margin-bottom: 6px;
+        color: var(--text-main);
+      }
+
+      input[type="text"],
+      input[type="date"],
+      textarea {
+        width: 100%;
+        padding: 12px 14px;
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        font-size: 0.98rem;
+        font-family: inherit;
+        color: var(--text-main);
+        background-color: #fff;
+        transition: all 0.2s ease;
+      }
+
+      input:focus,
+      textarea:focus {
+        border-color: var(--primary);
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(0, 121, 107, 0.15);
+        background-color: #fff;
+      }
+
+      textarea {
+        resize: vertical;
+        min-height: 90px;
+        line-height: 1.4;
+      }
+
+      .input-mic-wrapper {
+        display: flex;
+        position: relative;
+        align-items: stretch;
+        width: 100%;
+      }
+
+      .input-mic-wrapper textarea {
+        border-top-right-radius: 0;
+        border-bottom-right-radius: 0;
+      }
+
+      .btn-mic {
+        background-color: #f1f2f6;
+        border: 1px solid var(--border);
+        border-left: none;
+        color: var(--primary);
+        border-top-right-radius: 6px;
+        border-bottom-right-radius: 6px;
+        padding: 0 16px;
+        cursor: pointer;
+        font-size: 1.1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s ease;
+      }
+
+      .btn-mic:hover {
+        background-color: var(--primary-light);
+        color: var(--primary);
+      }
+
+      .btn-mic.recording {
+        background-color: #ffebee;
+        border-color: #ef5350;
+        color: #d32f2f;
+        animation: pulse 1.5s infinite;
+      }
+
+      @keyframes pulse {
+        0% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(0.97);
+          opacity: 0.8;
+        }
+        100% {
+          transform: scale(1);
+        }
+      }
+
+      .btn-primary {
+        background-color: var(--primary);
+        color: white;
+        border: none;
+        padding: 16px 24px;
+        font-size: 1.05rem;
+        font-weight: 700;
+        border-radius: 6px;
+        cursor: pointer;
+        width: 100%;
+        transition:
+          background 0.2s ease,
+          transform 0.1s ease;
+        box-shadow: 0 4px 12px rgba(0, 121, 107, 0.2);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-top: 10px;
+      }
+
+      .btn-primary:hover {
+        background-color: var(--primary-dark);
+      }
+
+      .btn-primary:active {
+        transform: scale(0.99);
+      }
+
+      .output-section {
+        margin-top: 40px;
+        display: none;
+        border-top: 2px dashed var(--border);
+        padding-top: 30px;
+      }
+
+      .output-section h2 {
+        color: var(--primary-dark);
+        font-size: 1.25rem;
+        margin-bottom: 15px;
+        font-weight: 700;
+      }
+
+      #promptResult {
+        width: 100%;
+        min-height: 380px;
+        background-color: #fafafa;
+        border: 1px solid var(--border);
+        padding: 20px;
+        border-radius: 6px;
+        font-family: inherit;
+        font-size: 0.98rem;
+        color: #34495e;
+        margin-bottom: 20px;
+        line-height: 1.6;
+        box-sizing: border-box;
+      }
+
+      .btn-accent {
+        background-color: var(--accent);
+        color: white;
+        border: none;
+        padding: 14px 24px;
+        font-size: 1rem;
+        font-weight: 700;
+        border-radius: 6px;
+        cursor: pointer;
+        width: 100%;
+        transition: background 0.2s ease;
+        box-shadow: 0 4px 12px rgba(133, 160, 30, 0.2);
+        text-transform: uppercase;
+      }
+
+      .btn-accent:hover {
+        background-color: var(--accent-hover);
+      }
+
+      @media (max-width: 768px) {
+        .grid-2 {
+          grid-template-columns: 1fr;
+          gap: 0;
+        }
+        body {
+          padding: 10px;
+        }
+        .container {
+          padding: 20px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>Gerador de Prompts Acadêmicos</h1>
+        <p>
+          Preencha os campos abaixo ou use o microfone para estruturar seu
+          relatório de enfermagem
+        </p>
+      </header>
+
+      <form id="reportForm">
+        <fieldset>
+          <legend>1. Identificação Acadêmica</legend>
+          <div class="grid-2">
+            <div class="form-group">
+              <label for="faculdadeNome">Instituição de Ensino</label>
+              <input
+                type="text"
+                id="faculdadeNome"
+                value="Centro Universitário São Camilo"
+                required
+              />
+            </div>
+            <div class="form-group">
+              <label for="professoraNome">Professor(a) Orientador(a)</label>
+              <input
+                type="text"
+                id="professoraNome"
+                placeholder="Ex: Prof. Rosana"
+                required
+              />
+            </div>
+          </div>
+          <div class="grid-2">
+            <div class="form-group">
+              <label for="dataPlantao">Data do Plantão</label>
+              <input type="date" id="dataPlantao" required />
+            </div>
+            <div class="form-group">
+              <label for="diaEstagio">Dia de Estágio (Extenso)</label>
+              <input
+                type="text"
+                id="diaEstagio"
+                placeholder="Ex: Décimo segundo"
+                required
+              />
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="grupoIntegrantes"
+              >Outros Acadêmicos no Grupo (Opcional)</label
+            >
+            <input
+              type="text"
+              id="grupoIntegrantes"
+              placeholder="Ex: Ana Paula e Bruno Silva"
+            />
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>2. Local e Cenário do Estágio</legend>
+          <div class="grid-2">
+            <div class="form-group">
+              <label for="hospitalNome">Nome do Hospital</label>
+              <input
+                type="text"
+                id="hospitalNome"
+                placeholder="Ex: Hospital São Camilo Pompéia"
+                required
+              />
+            </div>
+            <div class="form-group">
+              <label for="estagioArea">Setor / Ala de Atuação</label>
+              <input
+                type="text"
+                id="estagioArea"
+                placeholder="Ex: Unidade de Internação Pediátrica"
+                required
+              />
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="hospitalDescription"
+              >Infraestrutura e Dinâmica do Setor</label
+            >
+            <div class="input-mic-wrapper">
+              <textarea
+                id="hospitalDescricao"
+                required
+                placeholder="Descreva brevemente a estrutura física e organização do ambiente..."
+              ></textarea>
+              <button
+                type="button"
+                class="btn-mic"
+                onclick="startDictation('hospitalDescricao', this)"
+                title="Falar por áudio"
+              >
+                🎤
+              </button>
+            </div>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>3. O Paciente e Assistência Prestada</legend>
+          <div class="form-group">
+            <label for="paciente">Iniciais do Paciente, Idade e DI</label>
+            <input
+              type="text"
+              id="paciente"
+              placeholder="Ex: L. R. C. S., lactente de 9 meses, no 3º DI"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label for="diagnostico">Quadro Clínico e Evolução Médica</label>
+            <div class="input-mic-wrapper">
+              <textarea
+                id="diagnostico"
+                required
+                placeholder="Ex: Internado por quadro importante de vômito e diarreia, apresentando melhora clínica significativa e estabilidade para provável alta hospitalar..."
+              ></textarea>
+              <button
+                type="button"
+                class="btn-mic"
+                onclick="startDictation('diagnostico', this)"
+                title="Falar por áudio"
+              >
+                🎤
+              </button>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="atividades">Ações de Enfermagem Realizadas</label>
+            <div class="input-mic-wrapper">
+              <textarea
+                id="atividades"
+                required
+                placeholder="Ex: Realizado exame físico céfalo-caudal completo, aferição de sinais vitais, monitoramento de acesso venoso periférico com soroterapia ativa, avaliação de prescrição..."
+              ></textarea>
+              <button
+                type="button"
+                class="btn-mic"
+                onclick="startDictation('atividades', this)"
+                title="Falar por áudio"
+              >
+                🎤
+              </button>
+            </div>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>4. Eventos Adicionais e Intercorrências (Opcional)</legend>
+          <div class="form-group">
+            <label for="ocorrenciasExtra"
+              >Houve outros chamados ou atendimentos no plantão?</label
+            >
+            <div class="input-mic-wrapper">
+              <textarea
+                id="ocorrenciasExtra"
+                placeholder="Ex: No posto de enfermagem, prestei apoio à equipe no acolhimento de uma mãe vinda da UTI com lactente de 1 mês, auxiliando nos procedimentos de pesagem e banho de higiene..."
+              ></textarea>
+              <button
+                type="button"
+                class="btn-mic"
+                onclick="startDictation('ocorrenciasExtra', this)"
+                title="Falar por áudio"
+              >
+                🎤
+              </button>
+            </div>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>5. Raciocínio Clínico e Aprendizado</legend>
+          <div class="form-group">
+            <label for="dificuldade"
+              >Dificuldade Técnica ou Teórica Identificada</label
+            >
+            <div class="input-mic-wrapper">
+              <textarea
+                id="dificuldade"
+                required
+                placeholder="Ex: Organização lógica dos dados na redação técnica da evolução de enfermagem (coleta, análise e plano)..."
+              ></textarea>
+              <button
+                type="button"
+                class="btn-mic"
+                onclick="startDictation('dificuldade', this)"
+                title="Falar por áudio"
+              >
+                🎤
+              </button>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="estudo"
+              >Literatura consultada para sanar a dúvida</label
+            >
+            <div class="input-mic-wrapper">
+              <textarea
+                id="estudo"
+                required
+                placeholder="Ex: Guia de Anotações de Enfermagem do COREN-SP para revisar os conceitos de clareza, concisão e os aspectos ético-legais do registro..."
+              ></textarea>
+              <button
+                type="button"
+                class="btn-mic"
+                onclick="startDictation('estudo', this)"
+                title="Falar por áudio"
+              >
+                🎤
+              </button>
+            </div>
+          </div>
+        </fieldset>
+
+        <button type="button" class="btn-primary" onclick="gerarPrompt()">
+          Compilar Informações e Criar Prompt
+        </button>
+      </form>
+
+      <div class="output-section" id="outputArea">
+        <h2>Área de Revisão do Prompt (Editável):</h2>
+        <textarea id="promptResult"></textarea>
+        <button type="button" class="btn-accent" onclick="copiarTexto()">
+          Copiar Prompt Finalizado
+        </button>
+      </div>
+    </div>
+
+    <!-- Correção para o Brave e navegadores rígidos: Inclusão do fallback de SpeechRecognition -->
+    <script>
+      let recognition = null;
+      let currentTargetField = null;
+      let currentButton = null;
+
+      function initSpeechRecognition() {
+        const SpeechRecognition =
+          window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (SpeechRecognition) {
+          recognition = new SpeechRecognition();
+          recognition.continuous = false;
+          recognition.interimResults = false;
+          recognition.lang = "pt-BR";
+
+          recognition.onresult = function (e) {
+            const resultText = e.results[0][0].transcript;
+            if (currentTargetField) {
+              if (currentTargetField.value.trim() !== "") {
+                currentTargetField.value += " " + resultText;
+              } else {
+                currentTargetField.value = resultText;
+              }
+            }
+          };
+
+          recognition.onerror = function (e) {
+            console.error("Erro no reconhecimento:", e.error);
+            if (e.error === "not-allowed") {
+              alert(
+                "Acesso ao microfone negado. Se estiver usando o Brave, clique no ícone de 'Escudo/Shield' ou no cadeado ao lado da barra de endereço e mude a permissão de Microfone e 'Media Key System / Reconhecimento de Voz' para PERMITIR.",
+              );
+            }
+            resetMicButtons();
+          };
+
+          recognition.onend = function () {
+            resetMicButtons();
+          };
+        }
+      }
+
+      function startDictation(fieldId, button) {
+        if (!recognition) {
+          initSpeechRecognition();
+        }
+
+        if (!recognition) {
+          alert(
+            "O reconhecimento de voz não é suportado nativamente ou está bloqueado nas diretrizes de privacidade do seu navegador. Recomenda-se o uso do Chrome ou Edge se o problema persistir.",
+          );
+          return;
+        }
+
+        // Se clicar no botão que já está gravando, ele para
+        if (button.classList.contains("recording")) {
+          recognition.stop();
+          return;
+        }
+
+        resetMicButtons();
+
+        currentTargetField = document.getElementById(fieldId);
+        currentButton = button;
+
+        button.classList.add("recording");
+        button.innerText = "🛑";
+
+        try {
+          recognition.start();
+        } catch (e) {
+          console.error(e);
+          recognition.stop();
+        }
+      }
+
+      function resetMicButtons() {
+        const buttons = document.querySelectorAll(".btn-mic");
+        buttons.forEach((btn) => {
+          btn.classList.remove("recording");
+          btn.innerText = "🎤";
+        });
+        currentTargetField = null;
+        currentButton = null;
+      }
+
+      function formatarData(dataStr) {
+        if (!dataStr) return "";
+        const partes = dataStr.split("-");
+        return `${partes[2]}/${partes[1]}/${partes[0]}`;
+      }
+
+      function gerarPrompt() {
+        const faculdade = document.getElementById("faculdadeNome").value;
+        const professora = document.getElementById("professoraNome").value;
+        const dataFormato = formatarData(
+          document.getElementById("dataPlantao").value,
+        );
+        const dia = document.getElementById("diaEstagio").value;
+        const integrantes = document.getElementById("grupoIntegrantes").value;
+        const hospital = document.getElementById("hospitalNome").value;
+        const area = document.getElementById("estagioArea").value;
+        const hospitalDesc = document.getElementById("hospitalDescricao").value;
+        const paciente = document.getElementById("paciente").value;
+        const diagnostico = document.getElementById("diagnostico").value;
+        const atividades = document.getElementById("atividades").value;
+        const ocorrenciasExtra =
+          document.getElementById("ocorrenciasExtra").value;
+        const difficulty = document.getElementById("dificuldade").value;
+        const estudo = document.getElementById("estudo").value;
+
+        let extraText = "";
+        if (ocorrenciasExtra.trim() !== "") {
+          extraText = `- Eventos e ocorrências adicionais no setor: ${ocorrenciasExtra}`;
+        }
+
+        let grupoText = "";
+        if (integrantes.trim() !== "") {
+          grupoText = `A discussão clínica foi feita pela docente com o grupo integrado por mim e pelos acadêmicos: ${integrantes}.`;
+        } else {
+          grupoText = `A discussão clínica foi feita de forma coletiva pela docente com o grupo de acadêmicos em campo.`;
+        }
+
+        const promptText = `Atue como um tutor acadêmico de enfermagem focado na escrita científica e nos critérios institucionais de avaliação de relatórios do ${faculdade}.
+
+Escreva um relatório de estágio em enfermagem baseado estritamente na estrutura padrão dos relatórios de excelência acadêmica. O texto final deve ser dividido exatamente em 4 parágrafos principais + Referências Bibliográficas, mantendo a escrita formal, em terceira pessoa ou foco narrativo técnico impessoal, rico em raciocínio clínico.
+
+Aqui estão os dados brutos estruturados do dia para você transformar no relatório:
+- Instituição de Ensino: ${faculdade}
+- Nome do Supervisor/Docente: Professora ${professora}
+- Data de Referência: ${dataFormato}
+- Dia do Estágio: ${dia} dia de estágio
+- Local do Estágio: ${hospital}
+- Setor/Área de Atuação: ${area}
+- Descrição da infraestrutura do local: ${hospitalDesc}
+- Paciente e Estado: ${paciente}
+- Diagnóstico/Quadro clínico principal: ${diagnostico}
+- Atividades e ações executadas pelo aluno: ${atividades}
+${extraText}
+- Dificuldade técnica identificada: ${difficulty}
+- Suporte literário/Estudo feito para sanar a dúvida: ${estudo}
+
+---
+
+ESTRUTURA QUE VOCÊ DEVE SEGUIR FIELMENTE (4 PARÁGRAFOS):
+
+Parágrafo 1 (Descrição do Plantão e Casos): Começar detalhando a temporalidade e o cenário: "No ${dia} dia de estágio, realizado em ${dataFormato} no ${hospital}, especificamente no setor de ${area}, acompanhei o paciente [Dados do paciente]...". Integrar de forma fluida o quadro clínico, medicações, acessos e as ações executadas (exame físico e SSVV). Se houver eventos adicionais do dia (como auxílio a outros quartos ou atendimentos paralelos no posto), insira de forma coesa no final deste parágrafo. Descrever que a professora ${professora} mediou e fomentou a discussão do caso clínico com os estudantes. ${grupoText}
+
+Parágrafo 2 (Dificuldade e Prática Baseada em Evidências): Iniciar com "A dificuldade identificada no dia esteve relacionada a...". Explicar a lacuna técnica observada na prática e conectar diretamente com a conduta de busca ativa de literatura ("Diante disso, realizei a busca e leitura de..."). Fechar o parágrafo explicitando como essa fundamentação teórica garante a segurança do paciente, a continuidade da assistência e o respaldo ético-legal da enfermagem.
+
+Parágrafo 3 (Reflexão Semanal e Competências DCN): Iniciar com "Na reflexão semanal, identifiquei como ponto central...". Vincular o aprendizado prático diretamente com o desenvolvimento das Diretrizes Curriculares Nacionais (DCNs) de Enfermagem. Você deve detalhar explicitamente a competência de "Tomada de Decisão" (como os achados clínicos guiaram as prioridades assistenciais) e de "Educação Permanente" (como a identificação da lacuna técnica foi resolvida através do estudo autônomo).
+
+Parágrafo 4 (Avaliação de Campo, Docência e Autoavaliação): Avaliar o ${hospital}, integrando a descrição fornecida: "${hospitalDesc}". Avaliar a conduta pedagógica da professora ${professora}, ressaltando sua disponibilidade constante, mediação do aprendizado prático e incentivo ao raciocínio crítico para a construção da autonomia. Finalizar com a autoavaliação pessoal (citando atributos como proatividade e responsabilidade) e assumindo quais pontos técnicos específicos demandam maior dedicação de estudos futuros.
+
+Referências Bibliográficas: Incluir em formato ABNT a referência obrigatória das Diretrizes Curriculares (Parecer CNE/CES nº 64/2026) e gerar a referência correta para o material/guia/manual citado no estudo técnico do dia.
+
+Gere exclusivamente o texto final estruturado do relatório, sem observações extras ou cumprimentos antes ou após a resposta.`;
+
+        const resultArea = document.getElementById("promptResult");
+        resultArea.value = promptText;
+
+        document.getElementById("outputArea").style.display = "block";
+        document
+          .getElementById("outputArea")
+          .scrollIntoView({ behavior: "smooth" });
+      }
+
+      function copiarTexto() {
+        const copyText = document.getElementById("promptResult");
+        copyText.select();
+        copyText.setSelectionRange(0, 99999);
+        navigator.clipboard.writeText(copyText.value);
+        alert("Prompt copiado com sucesso!");
+      }
+    </script>
+  </body>
+</html>
