@@ -12,7 +12,7 @@
     'estagioArea', 'grupoIntegrantes', 'hospitalNome', 'hospitalDescricao',
     'setoresAcoes', 'ocorrenciasExtra', 'dificuldade', 'estudoTema',
     'estudoLink', 'dcnDesenvolvida', 'reflexaoSemanal', 'autoavaliacao',
-    'avaliacaoProfessor', 'nomeRelatorio'
+    'avaliacaoProfessor', 'observacoes', 'nomeRelatorio'
   ];
 
   var CONFIG_IDS = [
@@ -558,6 +558,7 @@
     var reflexaoSemanal = document.getElementById('reflexaoSemanal').value;
     var autoavaliacao = document.getElementById('autoavaliacao').value;
     var avaliacaoProfessor = document.getElementById('avaliacaoProfessor').value;
+    var observacoes = document.getElementById('observacoes').value;
 
     var modoEstrito = document.getElementById('modoEstrito').checked;
     var perguntasIA = document.getElementById('perguntasIA').checked;
@@ -711,6 +712,10 @@
       '- Infraestrutura avaliada do Campo: ' + hospitalDesc +
       reflexaoBlock + autoavaliacaoBlock + avaliacaoProfessorBlock +
       '\n' +
+      (observacoes.trim() !== ''
+        ? '- OBSERVA\u00c7\u00d5ES / INSTRU\u00c7\u00d5ES ESPEC\u00cdFICAS (a IA deve seguir PRIORITARIAMENTE): ' +
+          observacoes + '\n'
+        : '') +
       '\n' +
       '=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=\n' +
       'REGRAS DE CONSTRU\u00c7\u00c3O TEXTUAL (Siga exatamente a estrutura de 5 par\u00e1grafos + Refer\u00eancias):\n' +
