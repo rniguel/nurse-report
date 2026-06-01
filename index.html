@@ -20,6 +20,35 @@
         <span class="speech-badge" id="speechBadge" title="Verificando suporte a ditado por voz...">🎤 &hellip;</span>
       </header>
 
+      <!-- Session Bar -->
+      <div class="session-bar">
+        <div class="session-bar-left">
+          <button type="button" class="btn-session" id="btnSessaoAtual" onclick="abrirGerenciadorSessoes()">
+            &#x1F4CB; <span id="sessaoNumero">Relat&oacute;rio #1</span>
+          </button>
+          <span class="session-meta" id="sessaoMeta"></span>
+        </div>
+        <div class="session-bar-right">
+          <input type="text" id="nomeRelatorio" class="input-session-name" placeholder="Nome do relat&oacute;rio (opcional)" />
+          <button type="button" class="btn-subtle btn-new" id="btnNovoRelatorio" onclick="criarNovaSessao()" title="Novo relatório">
+            + Novo
+          </button>
+          <button type="button" class="btn-subtle" id="btnLimparForm" onclick="limparFormulario()">
+            &#x1F9F9; Limpar
+          </button>
+          <button type="button" class="btn-icon" id="btnConfig" onclick="abrirConfig()" title="Configurações">
+            &#x2699;&#xFE0F;
+          </button>
+        </div>
+      </div>
+
+      <div class="session-progress">
+        <div class="session-progress-bar" id="progressBar">
+          <div class="session-progress-fill" id="progressFill"></div>
+        </div>
+        <span class="session-progress-text" id="progressText">0%</span>
+      </div>
+
       <form id="reportForm">
         <fieldset>
           <legend>1. Dados Acad&ecirc;micos e Contexto</legend>
@@ -133,6 +162,69 @@
           </div>
         </fieldset>
 
+        <fieldset class="config-fieldset">
+          <legend>Configura&ccedil;&otilde;es do Prompt</legend>
+
+          <div class="config-group">
+            <label class="checkbox-label">
+              <input type="checkbox" id="modoEstrito" />
+              <span class="checkbox-custom"></span>
+              <strong>Modo Estrito</strong>
+              <span class="checkbox-hint">A IA deve usar SOMENTE o que foi escrito nos campos, sem inventar dados cl&iacute;nicos, sinais vitais, diagn&oacute;sticos ou procedimentos</span>
+            </label>
+          </div>
+
+          <div class="config-group">
+            <label class="checkbox-label">
+              <input type="checkbox" id="perguntasIA" />
+              <span class="checkbox-custom"></span>
+              <strong>Modo Perguntas</strong>
+              <span class="checkbox-hint">Antes de gerar o relat&oacute;rio, a IA deve fazer no m&iacute;nimo 5 perguntas para esclarecer lacunas ou inconsist&ecirc;ncias nos dados</span>
+            </label>
+          </div>
+
+          <div class="config-group">
+            <span class="config-label">Se&ccedil;&otilde;es obrigat&oacute;rias no relat&oacute;rio:</span>
+            <div class="checkbox-grid">
+              <label class="checkbox-label">
+                <input type="checkbox" id="secaoAtividades" checked />
+                <span class="checkbox-custom"></span>
+                Descri&ccedil;&atilde;o das atividades
+              </label>
+              <label class="checkbox-label">
+                <input type="checkbox" id="secaoReflexao" checked />
+                <span class="checkbox-custom"></span>
+                Reflex&atilde;o semanal
+              </label>
+              <label class="checkbox-label">
+                <input type="checkbox" id="secaoPesquisa" checked />
+                <span class="checkbox-custom"></span>
+                Pesquisa / lacuna de conhecimento
+              </label>
+              <label class="checkbox-label">
+                <input type="checkbox" id="secaoDcn" checked />
+                <span class="checkbox-custom"></span>
+                DCNs
+              </label>
+              <label class="checkbox-label">
+                <input type="checkbox" id="secaoCampo" checked />
+                <span class="checkbox-custom"></span>
+                Avalia&ccedil;&atilde;o do campo
+              </label>
+              <label class="checkbox-label">
+                <input type="checkbox" id="secaoProfessor" checked />
+                <span class="checkbox-custom"></span>
+                Avalia&ccedil;&atilde;o do professor
+              </label>
+              <label class="checkbox-label">
+                <input type="checkbox" id="secaoAutoavaliacao" checked />
+                <span class="checkbox-custom"></span>
+                Autoavalia&ccedil;&atilde;o
+              </label>
+            </div>
+          </div>
+        </fieldset>
+
         <div class="grid-2">
           <button type="button" class="btn btn-primary" onclick="gerarPrompt()">
             Compilar e Gerar Prompt
@@ -157,6 +249,53 @@
           <button type="button" class="btn btn-success" onclick="gerarPrompt()">
             Regenerar
           </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Gerenciador de Sessões -->
+    <div class="modal-overlay" id="modalSessoes" onclick="fecharModalSeFora(event, 'modalSessoes')">
+      <div class="modal">
+        <div class="modal-header">
+          <h2>&#x1F4CB; Relat&oacute;rios Salvos</h2>
+          <button type="button" class="btn-close" onclick="fecharModal('modalSessoes')">&times;</button>
+        </div>
+        <div class="modal-body">
+          <div id="sessaoList">
+            <!-- Renderizado por JS -->
+          </div>
+          <p class="text-muted" id="sessaoEmpty" style="display:none">Nenhum relat&oacute;rio salvo ainda.</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline" onclick="criarNovaSessao()">+ Nova Sess&atilde;o</button>
+          <button type="button" class="btn btn-danger" id="btnExcluirSelecionadas" onclick="excluirSessoesSelecionadas()" disabled>
+            Excluir selecionadas
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Config -->
+    <div class="modal-overlay" id="modalConfig" onclick="fecharModalSeFora(event, 'modalConfig')">
+      <div class="modal modal-sm">
+        <div class="modal-header">
+          <h2>&#x2699;&#xFE0F; Configura&ccedil;&otilde;es</h2>
+          <button type="button" class="btn-close" onclick="fecharModal('modalConfig')">&times;</button>
+        </div>
+        <div class="modal-body">
+          <div class="config-group">
+            <label class="config-label">Tema</label>
+            <div class="theme-toggle">
+              <button type="button" class="btn-theme" id="btnThemeLight" onclick="setTheme('light')">☀️ Claro</button>
+              <button type="button" class="btn-theme" id="btnThemeDark" onclick="setTheme('dark')">🌙 Escuro</button>
+            </div>
+          </div>
+          <div class="config-group">
+            <label class="config-label">Armazenamento</label>
+            <button type="button" class="btn btn-danger btn-sm" onclick="limparTodasSessoes()">
+              &#x1F5D1;&#xFE0F; Limpar todas as sess&otilde;es
+            </button>
+          </div>
         </div>
       </div>
     </div>
